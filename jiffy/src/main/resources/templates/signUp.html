@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+
+    <div class="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-96">
+        <h2 class="text-2xl font-semibold text-center mb-4">Create an Account</h2>
+        
+        <form id="signupForm" class="flex flex-col">
+            <label class="text-sm">Name</label>
+            <input type="text" id="name" required class="p-2 rounded bg-gray-700 text-white mb-2">
+
+            <label class="text-sm">Email</label>
+            <input type="email" id="email" required class="p-2 rounded bg-gray-700 text-white mb-2">
+
+            <label class="text-sm">Password</label>
+            <input type="password" id="password" required class="p-2 rounded bg-gray-700 text-white mb-2">
+
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="isScrumMaster" class="mr-2">
+                <label for="isScrumMaster">Are you a Scrum Master?</label>
+            </div>
+
+            <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white p-2 rounded-lg font-semibold">
+                Signup
+            </button>
+        </form>
+
+        <p class="text-sm text-gray-400 mt-4 text-center">
+            Already have an account? <a href="login.html" class="text-teal-400 hover:underline">Login</a>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const userData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                isScrumMaster: document.getElementById("isScrumMaster").checked
+            };
+
+            fetch("http://localhost:8080/auth/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error("Error:", error));
+            
+        });
+    </script>
+
+</body>
+</html>

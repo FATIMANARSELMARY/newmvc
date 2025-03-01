@@ -1,0 +1,20 @@
+server:
+  port: 8080  # Change if needed
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jiffy  # Ensure 'jiffy' database exists
+    username: root
+    password: Peileen@24
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # Use "update" to auto-create/modify tables, "create" to recreate tables on startup
+    show-sql: true  # Enable SQL query logging
+    database-platform: org.hibernate.dialect.MySQL8Dialect  # Ensure correct dialect
+
+  sql:
+    init:
+      mode: always  # Ensures schema.sql and data.sql are executed if present
+
