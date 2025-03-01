@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jiffy-Inspired Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1f2937",
+                        accent: "#06b6d4"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-primary text-white font-sans">
+    <!-- Navbar -->
+    <nav class="flex justify-between items-center p-5 bg-gray-900">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-accent"></div>
+            <h1 class="text-2xl font-bold">JIFFY</h1>
+        </div>
+        <ul class="flex space-x-6">
+            <li><a href="#" class="hover:text-accent">Features</a></li>
+            <li><a href="#" class="hover:text-accent">Product Guide</a></li>
+            <li><a href="#" class="hover:text-accent">Templates</a></li>
+            <li><a href="#" class="hover:text-accent">Pricing</a></li>
+            <li><a href="#" class="hover:text-accent">Enterprise</a></li>
+        </ul>
+        <div class="flex space-x-4">
+            <button class="bg-accent text-black px-4 py-2 rounded-lg font-semibold">GET STARTED</button>
+            <button class="hover:text-accent">Sign In</button>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="text-center py-20">
+        <h2 class="text-5xl font-bold">Great outcomes</h2>
+        <p class="text-xl mt-2">start with <span class="text-accent">JIFFY</span></p>
+        <p class="max-w-2xl mx-auto text-lg mt-4">The only project management tool you need to plan and track work across every team.</p>
+        <div class="mt-6">
+            <input type="email" placeholder="you@gmail.com" class="px-4 py-2 rounded-lg text-black">
+            <button class="ml-2 bg-accent px-6 py-2 rounded-lg text-black font-semibold hover:bg-teal-400">Sign up</button>
+        </div>
+        <p class="mt-4">or continue with</p>
+        <div class="flex justify-center space-x-4 mt-2">
+            <button class="bg-gray-800 px-4 py-2 rounded-lg">Google</button>
+            <button class="bg-gray-800 px-4 py-2 rounded-lg">Microsoft</button>
+        </div>
+    </section>
+    
+    <!-- Feature Cards -->
+    <section class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 p-10">
+        <div class="p-5 bg-gray-800 rounded-lg shadow-lg hover:scale-105 transition">
+            <h3 class="text-xl font-semibold mb-2">Software Development</h3>
+            <p class="text-sm">Track and manage software projects efficiently.</p>
+        </div>
+        <div class="p-5 bg-gray-800 rounded-lg shadow-lg hover:scale-105 transition">
+            <h3 class="text-xl font-semibold mb-2">IT Support Services</h3>
+            <p class="text-sm">Streamline IT support workflows.</p>
+        </div>
+        <div class="p-5 bg-gray-800 rounded-lg shadow-lg hover:scale-105 transition">
+            <h3 class="text-xl font-semibold mb-2">Design</h3>
+            <p class="text-sm">Enhance collaboration on creative projects.</p>
+        </div>
+        <div class="p-5 bg-gray-800 rounded-lg shadow-lg hover:scale-105 transition">
+            <h3 class="text-xl font-semibold mb-2">Operations</h3>
+            <p class="text-sm">Improve intake processes efficiently.</p>
+        </div>
+    </section>
+    
+</body>
+</html>
