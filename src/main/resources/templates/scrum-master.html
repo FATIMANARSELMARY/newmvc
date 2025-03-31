@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrum Master Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-gray-100">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold text-teal-400 mb-6">Scrum Master Dashboard</h1>
+
+    <!-- Scrum Master ID Input -->
+    <div class="mb-6">
+      <label for="scrumMasterId" class="block text-sm font-medium text-teal-400">Scrum Master ID</label>
+      <input type="text" id="scrumMasterId" class="mt-1 p-2 bg-gray-800 border border-teal-400 rounded-md w-full" placeholder="Enter your Scrum Master ID">
+    </div>
+
+    <!-- Create Template Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold text-teal-400 mb-4">Create Template</h2>
+      <form id="createTemplateForm">
+        <div class="mb-4">
+          <label for="templateName" class="block text-sm font-medium text-teal-400">Template Name</label>
+          <input type="text" id="templateName" class="mt-1 p-2 bg-gray-800 border border-teal-400 rounded-md w-full" placeholder="Enter template name">
+        </div>
+        <div class="mb-4">
+          <label for="templateContent" class="block text-sm font-medium text-teal-400">Content</label>
+          <textarea id="templateContent" class="mt-1 p-2 bg-gray-800 border border-teal-400 rounded-md w-full" rows="4" placeholder="Enter template content"></textarea>
+        </div>
+        <button type="submit" class="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600">Create Template</button>
+      </form>
+    </div>
+
+    <!-- View Templates Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold text-teal-400 mb-4">Your Templates</h2>
+      <div id="templatesList" class="space-y-4">
+        <!-- Templates will be dynamically populated here -->
+      </div>
+    </div>
+
+    <!-- View Reports Section -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold text-teal-400 mb-4">Reports by Employees</h2>
+      <div id="reportsList" class="space-y-4">
+        <!-- Reports will be dynamically populated here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // JavaScript for handling API calls and dynamic content
+    const scrumMasterIdInput = document.getElementById('scrumMasterId');
+    const createTemplateForm = document.getElementById('createTemplateForm');
+    const templatesList = document.getElementById('templatesList');
+    const reportsList = document.getElementById('reportsList');
+
+    // Fetch and display templates for the Scrum Master
+    const fetchTemplates = async () => {
+      const scrumMasterId = scrumMasterIdInput.value;
+      if (!scrumMasterId) return;
+
+      const response = await fetch(`/templates/scrum-master/${scrumMasterId}`);
+      const templates = await response.json();
+      templatesList.innerHTML = templates.map(template => `
+        <div class="p-4 bg-gray-800 rounded-md">
+          <h3 class="text-xl font-semibold text-teal-400">${template.name}</h3>
+          <p class="text-gray-300">${template.content}</p>
+        </div>
+      `).join('');
+    };
+
+    // Create a new template
+    createTemplateForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const scrumMasterId = scrumMasterIdInput.value;
+      const name = document.getElementById('templateName').value;
+      const content = document.getElementById('templateContent').value;
+
+      const response = await fetch(`/templates/create/${scrumMasterId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, content })
+      });
+      const newTemplate = await response.json();
+      fetchTemplates(); // Refresh the templates list
+    });
+
+    // Fetch and display reports by employees
+    const fetchReports = async () => {
+      const scrumMasterId = scrumMasterIdInput.value;
+      if (!scrumMasterId) return;
+
+      const response = await fetch(`/reports/scrum-master/${scrumMasterId}`);
+      const reports = await response.json();
+      reportsList.innerHTML = reports.map(report => `
+        <div class="p-4 bg-gray-800 rounded-md">
+          <h3 class="text-xl font-semibold text-teal-400">${report.title}</h3>
+          <p class="text-gray-300">${report.content}</p>
+          <p class="text-sm text-gray-400">Created at: ${new Date(report.createdAt).toLocaleString()}</p>
+        </div>
+      `).join('');
+    };
+
+    // Initialize
+    scrumMasterIdInput.addEventListener('input', () => {
+      fetchTemplates();
+      fetchReports();
+    });
+  </script>
+</body>
+</html>

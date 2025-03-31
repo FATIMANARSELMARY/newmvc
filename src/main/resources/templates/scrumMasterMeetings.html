@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrum Master Meetings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+
+<div class="bg-gray-800 text-white p-8 rounded-lg shadow-lg w-96">
+    <h2 class="text-2xl font-semibold text-center mb-4">Manage Meetings</h2>
+
+    <!-- Scrum Master ID Input -->
+    <div class="mb-6">
+        <label class="text-sm">Scrum Master ID</label>
+        <input type="number" id="scrumMasterIdInput" placeholder="Enter Scrum Master ID" class="p-2 rounded bg-gray-700 text-white w-full mb-2">
+        <button onclick="setScrumMasterId()" class="bg-teal-500 hover:bg-teal-600 text-white p-2 rounded-lg w-full font-semibold">
+            Set Scrum Master ID
+        </button>
+    </div>
+
+    <!-- Create/Edit Meeting Form -->
+    <form id="meetingForm" class="flex flex-col mb-6">
+        <input type="hidden" id="meetingId">
+
+        <label class="text-sm">Title</label>
+        <input type="text" id="title" required class="p-2 rounded bg-gray-700 text-white mb-2">
+
+        <label class="text-sm">Description</label>
+        <input type="text" id="description" required class="p-2 rounded bg-gray-700 text-white mb-2">
+
+        <label class="text-sm">Meeting Link</label>
+        <input type="text" id="meetingLink" required class="p-2 rounded bg-gray-700 text-white mb-2">
+
+        <label class="text-sm">Date and Time</label>
+        <input type="datetime-local" id="meetingDateTime" required class="p-2 rounded bg-gray-700 text-white mb-2">
+
+        <button type="submit" class="bg-teal-500 hover:bg-teal-600 text-white p-2 rounded-lg font-semibold">
+            Save Meeting
+        </button>
+    </form>
+
+    <!-- List of Meetings -->
+    <h3 class="text-xl font-semibold mb-4">Your Meetings</h3>
+    <ul id="meetingList" class="space-y-4"></ul>
+</div>
+
+<script>
+    let scrumMasterId = null; // Will be set by the user
+
+    // Set the Scrum Master ID from the input field
+    function setScrumMasterId() {
+        const input = document.getElementById("scrumMasterIdInput").value;
+        if (input) {
+            scrumMasterId = parseInt(input, 10);
+            fetchMeetings(); // Fetch meetings for the specified Scrum Master
+        } else {
+            alert("Please enter a valid Scrum Master ID.");
+        }
+    }
+
+    // Fetch and display meetings
+    function fetchMeetings() {
+        if (!scrumMasterId) {
+            alert("Please set the Scrum Master ID first.");
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/meetings/scrum-master/readAll/${scrumMasterId}`)
+            .then(response => response.json())
+            .then(data => {
+                const meetingList = document.getElementById("meetingList");
+                meetingList.innerHTML = "";
+
+                data.forEach(meeting => {
+                    const li = document.createElement("li");
+                    li.className = "bg-gray-700 p-4 rounded-lg";
+                    li.innerHTML = `
+                        <strong>${meeting.title}</strong><br>
+                        ${meeting.description}<br>
+                        <a href="${meeting.meetingLink}" target="_blank" class="text-teal-400 hover:underline">Join Meeting</a><br>
+                        <em>${new Date(meeting.meetingDateTime).toLocaleString()}</em>
+                        <button onclick="deleteMeeting(${meeting.id})" class="bg-red-500 hover:bg-red-600 text-white p-1 rounded ml-2">Delete</button>
+                        <button onclick="editMeeting(${meeting.id})" class="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded">Edit</button>
+                    `;
+                    meetingList.appendChild(li);
+                });
+            })
+            .catch(error => console.error("Error:", error));
+    }
+
+    // Save or update a meeting
+    document.getElementById("meetingForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        if (!scrumMasterId) {
+            alert("Please set the Scrum Master ID first.");
+            return;
+        }
+
+        const meetingData = {
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            meetingLink: document.getElementById("meetingLink").value,
+            meetingDateTime: document.getElementById("meetingDateTime").value
+        };
+
+        const meetingId = document.getElementById("meetingId").value;
+
+        const url = meetingId
+            ? `http://localhost:8080/api/meetings/scrum-master/update/${meetingId}`
+            : `http://localhost:8080/api/meetings/scrum-master/create/${scrumMasterId}`;
+
+        fetch(url, {
+            method: meetingId ? "PUT" : "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(meetingData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(meetingId ? "Meeting updated successfully!" : "Meeting created successfully!");
+            fetchMeetings(); // Refresh the list
+            document.getElementById("meetingForm").reset(); // Clear the form
+        })
+        .catch(error => console.error("Error:", error));
+    });
+
+    // Delete a meeting
+    function deleteMeeting(meetingId) {
+        if (!scrumMasterId) {
+            alert("Please set the Scrum Master ID first.");
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/meetings/scrum-master/delete/${meetingId}`, {
+            method: "DELETE"
+        })
+        .then(() => {
+            alert("Meeting deleted successfully!");
+            fetchMeetings(); // Refresh the list
+        })
+        .catch(error => console.error("Error:", error));
+    }
+
+    // Edit a meeting
+    function editMeeting(meetingId) {
+        if (!scrumMasterId) {
+            alert("Please set the Scrum Master ID first.");
+            return;
+        }
+
+        fetch(`http://localhost:8080/api/meetings/scrum-master/readAll/${scrumMasterId}`)
+            .then(response => response.json())
+            .then(data => {
+                const meeting = data.find(m => m.id === meetingId);
+                if (meeting) {
+                    document.getElementById("meetingId").value = meeting.id;
+                    document.getElementById("title").value = meeting.title;
+                    document.getElementById("description").value = meeting.description;
+                    document.getElementById("meetingLink").value = meeting.meetingLink;
+                    document.getElementById("meetingDateTime").value = meeting.meetingDateTime.replace(" ", "T");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    }
+</script>
+
+</body>
+</html>
