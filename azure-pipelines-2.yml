@@ -6,7 +6,9 @@
 trigger:
 - develop
 
-pool: test-pool
+pool:
+  vmImage: ubuntu-latest
+
 
 steps:
 - task: Maven@4
