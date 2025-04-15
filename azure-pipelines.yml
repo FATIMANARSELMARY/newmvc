@@ -4,9 +4,9 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/java
 
 trigger:
-- develop
+- main
 
-pool: modelagent
+pool: ubuntu-latest
 
 steps:
 - task: Maven@3
@@ -18,4 +18,4 @@ steps:
     jdkArchitectureOption: 'x64'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package _Dskiptests'
+    goals: 'package'
